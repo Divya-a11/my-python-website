@@ -59,7 +59,6 @@ def index():
         explanation=explanation
     )
 
-
 import os
 
 if __name__ == "__main__":
