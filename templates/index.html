@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Smart Grammar Analyzer</title>
+
+<style>
+
+body {
+
+    font-family: Arial;
+
+    background-image: url("/static/bg.gif");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    margin: 0;
+    padding: 30px;
+
+}
+
+.container {
+
+    max-width: 950px;
+
+    margin: auto;
+
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 15px;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+
+}
+
+h1 {
+
+    text-align: center;
+
+}
+
+.subtitle {
+
+    text-align: center;
+
+    color: gray;
+
+    margin-bottom: 20px;
+
+}
+
+textarea {
+
+    width: 100%;
+
+    height: 150px;
+
+    font-size: 16px;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+}
+
+.buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+}
+
+button {
+
+    flex: 1;
+
+    padding: 14px;
+
+    font-size: 16px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+}
+
+.analyze {
+
+    background: #28a745;
+
+    color: white;
+
+}
+
+.reset {
+
+    background: #dc3545;
+
+    color: white;
+
+}
+
+.section {
+
+    margin-top: 20px;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+}
+
+.original {
+
+    background: #e3f2fd;
+
+}
+
+.transformed {
+
+    background: #e8f5e9;
+
+}
+
+.ambiguity {
+
+    background: #fff3cd;
+
+}
+
+.first {
+
+    background: #fce4ec;
+
+}
+
+.follow {
+
+    background: #ede7f6;
+
+}
+
+.explanation {
+
+    background: #f1f1f1;
+
+}
+
+.tree {
+
+    background: #e0f7fa;
+
+    font-family: monospace;
+
+}
+
+.status {
+
+    font-weight: bold;
+
+}
+
+.detected {
+
+    color: red;
+
+}
+
+.ok {
+
+    color: green;
+
+}
+
+pre {
+
+    font-size: 15px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>
+
+Smart Grammar Analyzer
+
+</h1>
+
+<p class="subtitle">
+
+Left Recursion • Ambiguity • FIRST • FOLLOW • Visual Explanation
+
+</p>
+
+<form method="POST">
+
+<label>
+
+Enter Grammar:
+
+</label>
+
+<textarea name="grammar">
+
+E -> E + T | T
+T -> T * F | F
+F -> ( E ) | id
+
+</textarea>
+
+<div class="buttons">
+
+<button class="analyze">
+
+Analyze
+
+</button>
+
+<button
+type="reset"
+class="reset">
+
+Reset
+
+</button>
+
+</div>
+
+</form>
+
+{% if transformed %}
+
+<div class="section original">
+
+<h3>
+
+Step 1 — Original Grammar
+
+</h3>
+
+<pre>
+
+{{ original }}
+
+</pre>
+
+</div>
+
+<div class="section transformed">
+
+<h3>
+
+Step 2 — Left Recursion Removed
+
+</h3>
+
+<pre>
+
+{{ transformed }}
+
+</pre>
+
+</div>
+
+<div class="section ambiguity">
+
+<h3>
+
+Step 3 — Ambiguity Detection
+
+</h3>
+
+{% if "No" in ambiguity %}
+
+<span class="status ok">
+
+No Ambiguity Detected
+
+</span>
+
+{% else %}
+
+<span class="status detected">
+
+Ambiguity Possible
+
+</span>
+
+{% endif %}
+
+<pre>
+
+{{ ambiguity }}
+
+</pre>
+
+</div>
+
+<div class="section first">
+
+<h3>
+
+Step 4 — FIRST Sets
+
+</h3>
+
+<pre>
+
+{{ first }}
+
+</pre>
+
+</div>
+
+<div class="section follow">
+
+<h3>
+
+Step 5 — FOLLOW Sets
+
+</h3>
+
+<pre>
+
+{{ follow }}
+
+</pre>
+
+</div>
+
+<div class="section tree">
+
+<h3>
+
+Step 6 — Simple Parse Tree (Visual)
+
+</h3>
+
+<pre>
+
+        Expression
+           |
+        Operator
+        /     \
+     Left     Right
+
+</pre>
+
+</div>
+
+<div class="section explanation">
+
+<h3>
+
+Step 7 — Explanation 
+
+</h3>
+
+<pre>
+
+The system checked your grammar.
+
+If a rule started with itself,
+it detected LEFT RECURSION.
+
+Then it rewrote the grammar
+into a form suitable for parsing.
+
+It also checked if multiple
+interpretations are possible
+(AMBIGUITY).
+
+Finally, it calculated:
+
+FIRST → what symbols can appear first
+FOLLOW → what symbols can appear next
+
+</pre>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</body>
+
+</html>
